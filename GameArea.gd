@@ -23,13 +23,13 @@ class Slot:
 	var menu      = null
 	var dragging  = null
 	var timer     = null
-	var ItemDatabase
+#	var ItemDatabase
 	
 	func _init(c):
 		container = c
 	
 	func _ready():
-		ItemDatabase = get_node("/root/item_database")
+#		ItemDatabase = get_node("/root/item_database")
 		set_size(Vector2(SLOT_SIZE, SLOT_SIZE))
 	
 	func _draw():
