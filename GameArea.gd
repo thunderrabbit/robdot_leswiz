@@ -142,6 +142,9 @@ func _ready():
 		slot.set_pos(Vector2(left_space+(SLOT_SIZE + slot_gap_h)*(i%slots_across), 
 					         top_space+(SLOT_SIZE + slot_gap_v)*(i/slots_across)))
 
+## I really do not like having these work here, but they do not seem to work elsewhere
+## I want mouse_enter and mouse_exit to be handled by the piece, not the game board.
+## Plus, why the heck do these get triggered for each piece when they are here at the board level??
 func _on_GameArea_mouse_enter():
 	print("GameArea entered")
 
