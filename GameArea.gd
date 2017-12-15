@@ -70,6 +70,7 @@ class Slot:
 		return object
 	
 	func start_monitoring_drag(o):
+		print("started dragon")
 		if dragging != null:
 			print("error, already dragging")
 		dragging = o
