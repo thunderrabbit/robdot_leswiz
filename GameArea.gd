@@ -12,7 +12,12 @@ var slot_gap_h = slot_gap
 
 # var bottom_space = 20
 
-var slots = []
+var player_sprite
+var player_position = Vector2()	# player position in x,y index
+var ItemDatabase		# Will know about pieces
+var block_sprite = preload("res://SubScenes/GamePiece.tscn")
+
+var slots = []			# array of all the positions in the board
 
 const SLOT_SIZE = 52
 
@@ -132,7 +137,10 @@ class Slot:
 			return stack.count
 
 func _ready():
-	popup()
+	ItemDatabase = get_node("/root/item_database")
+	randomize()		# randomize seed
+	popup()			# make scene visible
+
 	for i in range(grid_slots):
 		print("add slot ", i)
 		var slot = Slot.new(self)
@@ -141,6 +149,48 @@ func _ready():
 		slots.append(slot)
 		slot.set_pos(Vector2(left_space+(SLOT_SIZE + slot_gap_h)*(i%slots_across), 
 					         top_space+(SLOT_SIZE + slot_gap_v)*(i/slots_across)))
+
+	new_player()
+
+
+# get a random number to choose the type
+func random_type():
+	return randi() % ItemDatabase.num_items()
+
+# update player sprite display
+func update_player_sprite(sprites):
+	player_sprite.set_pos(Vector2(player_position.x*SLOT_SIZE, player_position.y*SLOT_SIZE))
+
+# generate a new player
+func new_player():
+	# new player will be a random of four colors
+	var new_player_type_ordinal = random_type()
+
+	# select top center position
+	player_position = Vector2(slots_across/2, 0)
+
+
+	# instantiate four blocks for our player.  i is unused here
+	for i in range(1):
+		# instantiate a block
+		player_sprite = block_sprite.instance()
+
+		# test talking to the player_sprite's script
+		player_sprite.set_type_ordinal(new_player_type_ordinal)
+#
+#		# keep it in player_sprite so we can find them later
+#		player_sprite.append(sprite)
+#		# add it to scene
+		add_child(player_sprite)
+#
+	# now arrange the blocks making up this player in the right shape
+	update_player_sprite(player_sprite)
+#
+#	# check game over
+#	for block in get_player_block_positions():
+#		if board[Vector2(block.x, block.y)] != null:
+#			game_over()
+#			return
 
 ## I really do not like having these work here, but they do not seem to work elsewhere
 ## I want mouse_enter and mouse_exit to be handled by the piece, not the game board.
