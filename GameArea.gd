@@ -1,8 +1,15 @@
 extends Popup
 
-#export(int)    var size      = 5
-var size      = 7		# I hope this is game width in slots
+#export(int)    var grid_slots  (was size)    = 5
+var slots_across = 7		# game width in slots
+var slots_down = 10		# game width in slots
+var grid_slots      = slots_across * slots_down
 var top_space = 30		# Might just move the Popup down instead
+var left_space = 10		# Space on the left
+var slot_gap = 5
+var slot_gap_v = slot_gap
+var slot_gap_h = slot_gap
+
 # var bottom_space = 20
 
 var slots = []
@@ -23,7 +30,7 @@ class Slot:
 	
 	func _ready():
 		ItemDatabase = get_node("/root/item_database")
-		set_size(Vector2(SLOT_SIZE + 2, SLOT_SIZE + 2))
+		set_size(Vector2(SLOT_SIZE, SLOT_SIZE))
 	
 	func _draw():
 		draw_rect(Rect2(Vector2(0, 0), get_size()), Color(0.2, 0.2, 0.2, 1))
@@ -31,12 +38,11 @@ class Slot:
 	func _input_event(event):
 		if event.type == InputEvent.MOUSE_BUTTON:
 			if event.button_index == 2:
-				print(get_pos())
-				show_menu(get_global_transform().get_origin() + event.pos)
+				print(get_pos(), "button 2")
 				accept_event()
 			elif event.button_index == 1:
+				print(get_pos(), "button 1")
 				if !event.pressed:
-					show_menu(get_global_transform().get_origin() + event.pos)
 					accept_event()
 	
 	func update_contents():
@@ -139,11 +145,12 @@ class Slot:
 
 func _ready():
 	popup()
-	for i in range(size):
+	for i in range(grid_slots):
 		print("add slot ", i)
 		var slot = Slot.new(self)
 		slot.set_name("slot_"+str(i))
 		add_child(slot)
 		slots.append(slot)
-		slot.set_pos(Vector2(6+(SLOT_SIZE + 5)*(i%5), top_space+(SLOT_SIZE + 5)*(i/5)))
+		slot.set_pos(Vector2(left_space+(SLOT_SIZE + slot_gap_h)*(i%slots_across), 
+					         top_space+(SLOT_SIZE + slot_gap_v)*(i/slots_across)))
 
