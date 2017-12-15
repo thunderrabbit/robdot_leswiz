@@ -45,16 +45,6 @@ class Slot:
 				if !event.pressed:
 					accept_event()
 	
-	func update_contents():
-		container.on_Update_inventory_contents()
-		if stack != null:
-			set_tooltip(ItemDatabase.get_item_name(stack.item))
-			stack.set_size(Vector2(SLOT_SIZE, SLOT_SIZE))
-			stack.set_pos(Vector2(1, 1))
-			stack.layout()
-		else:
-			set_tooltip("")
-	
 	func can_drop_data(p, v):
 		return can_add_stack(v[1])
 	
@@ -77,7 +67,6 @@ class Slot:
 		# is not handled
 		start_monitoring_drag(stack)
 		stack = null
-		update_contents()
 		return object
 	
 	func start_monitoring_drag(o):
@@ -123,7 +112,6 @@ class Slot:
 			rv = true
 		else:
 			rv = stack.stack(s)
-		update_contents()
 		return rv
 	
 	func get():
@@ -133,7 +121,6 @@ class Slot:
 		if stack == null:
 			stack = s
 			add_child(stack)
-			update_contents()
 			return true
 		return false
 	
