@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=1]
+
+[ext_resource path="res://GameArea.gd" type="Script" id=1]
+
+[node name="LeSwipeground" type="Node"]
+
+[node name="GameArea" type="Popup" parent="."]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 0.0
+margin/right = 595.0
+margin/bottom = 919.0
+popup/exclusive = false
+script/script = ExtResource( 1 )
+
+
