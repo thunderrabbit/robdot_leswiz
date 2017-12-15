@@ -154,3 +154,8 @@ func _ready():
 		slot.set_pos(Vector2(left_space+(SLOT_SIZE + slot_gap_h)*(i%slots_across), 
 					         top_space+(SLOT_SIZE + slot_gap_v)*(i/slots_across)))
 
+func _on_GameArea_mouse_enter():
+	print("GameArea entered")
+
+func _on_GameArea_mouse_exit():
+	print("GameArea exit")

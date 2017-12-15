@@ -17,4 +17,8 @@ margin/bottom = 919.0
 popup/exclusive = false
 script/script = ExtResource( 1 )
 
+[connection signal="mouse_enter" from="GameArea" to="GameArea" method="_on_GameArea_mouse_enter"]
+
+[connection signal="mouse_exit" from="GameArea" to="GameArea" method="_on_GameArea_mouse_exit"]
+
 
