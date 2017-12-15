@@ -1,8 +1,11 @@
 extends Popup
 
-# class member variables go here, for example:
-# var a = 2
-# var b = "textvar"
+#export(int)    var size      = 5
+var size      = 7		# I hope this is game width in slots
+var top_space = 30		# Might just move the Popup down instead
+# var bottom_space = 20
+
+var slots = []
 
 const SLOT_SIZE = 52
 
@@ -135,7 +138,12 @@ class Slot:
 			return stack.count
 
 func _ready():
-	# Called every time the node is added to the scene.
-	# Initialization here
-	pass
+	popup()
+	for i in range(size):
+		print("add slot ", i)
+		var slot = Slot.new(self)
+		slot.set_name("slot_"+str(i))
+		add_child(slot)
+		slots.append(slot)
+		slot.set_pos(Vector2(6+(SLOT_SIZE + 5)*(i%5), top_space+(SLOT_SIZE + 5)*(i/5)))
 
