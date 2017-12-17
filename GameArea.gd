@@ -18,6 +18,7 @@ var player_position = Vector2()	# player position in x,y index
 var ItemDatabase		# Will know about pieces
 var block_sprite = preload("res://SubScenes/GamePiece.tscn")
 
+var column_heights = []	# how tall is each column?
 var slots = []			# array of all the positions in the board
 var slottyMcSlotface	# Will be used to determine positions of pieces based on slots
 
@@ -152,6 +153,10 @@ func _ready():
 	ItemDatabase = get_node("/root/item_database")
 	randomize()		# randomize seed
 	popup()			# make scene visible
+	draw_slots()
+	new_player()
+
+func draw_slots():
 	var x
 	var y
 	for i in range(grid_slots):
@@ -163,7 +168,7 @@ func _ready():
 		x = i%slots_across
 		y = i/slots_across
 		slot.set_pos(slottyMcSlotface.get_position_for_xy(x,y))
-	new_player()
+
 
 # get a random number to choose the type
 func random_type():
