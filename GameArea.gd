@@ -154,7 +154,14 @@ func _ready():
 	randomize()		# randomize seed
 	popup()			# make scene visible
 	draw_slots()
+	reset_columns()
 	new_player()
+
+# columns start at height = 0
+# (no pieces in any column)
+func reset_columns():
+	for i in range(slots_across):
+		column_heights.append(0)
 
 func draw_slots():
 	var x
@@ -181,7 +188,7 @@ func update_player_sprites(player_sprites):
 	player_sprites[1].get_node("Sprite").set_modulate(Color(1,1,1, 0.3))
 
 func column_height(column):
-	return column
+	return slots_down - column_heights[column] - 1
 
 # generate a new player
 func new_player():
