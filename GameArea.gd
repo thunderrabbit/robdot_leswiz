@@ -19,6 +19,7 @@ var ItemDatabase		# Will know about pieces
 var block_sprite = preload("res://SubScenes/GamePiece.tscn")
 
 var slots = []			# array of all the positions in the board
+var slottyMcSlotface	# Will be used to determine positions of pieces based on slots
 
 const SLOT_SIZE = 52
 
@@ -26,6 +27,10 @@ class Slot:
 	extends Control
 	var container = null
 	var stack     = null
+	var GLOBALtop_space = 30		# Might just move the Popup down instead
+	var GLOBALleft_space = 10		# Space on the left
+	var GLOBALslot_gap_v = 5
+	var GLOBALslot_gap_h = 5
 	var menu      = null
 	var dragging  = null
 	var timer     = null
@@ -137,19 +142,26 @@ class Slot:
 		else:
 			return stack.count
 
+	func get_position_for_xy(x,y):
+		return Vector2(GLOBALleft_space+(SLOT_SIZE + GLOBALslot_gap_h)*(x), 
+					    GLOBALtop_space+(SLOT_SIZE + GLOBALslot_gap_v)*(y))
+
 func _ready():
+	slottyMcSlotface = Slot.new(self)
 	ItemDatabase = get_node("/root/item_database")
 	randomize()		# randomize seed
 	popup()			# make scene visible
-
+	var x
+	var y
 	for i in range(grid_slots):
 		print("add slot ", i)
 		var slot = Slot.new(self)
 		slot.set_name("slot_"+str(i))
 		add_child(slot)
 		slots.append(slot)
-		slot.set_pos(Vector2(left_space+(SLOT_SIZE + slot_gap_h)*(i%slots_across), 
-					         top_space+(SLOT_SIZE + slot_gap_v)*(i/slots_across)))
+		x = i%slots_across
+		y = i/slots_across
+		slot.set_pos(slottyMcSlotface.get_position_for_xy(x,y))
 	new_player()
 
 # get a random number to choose the type
@@ -158,10 +170,8 @@ func random_type():
 
 # update player sprite display
 func update_player_sprites(player_sprites):
-	for i in range(2):
-		player_sprites[i].set_pos(Vector2(i*SLOT_SIZE + player_position.x*SLOT_SIZE, i*SLOT_SIZE + player_position.y*SLOT_SIZE))
-#		player_sprites   .set_pos(Vector2(player_position.x*SLOT_SIZE, player_position.y*SLOT_SIZE))
-	pass
+	player_sprites[0].set_pos(slottyMcSlotface.get_position_for_xy(player_position.x, player_position.y))
+	player_sprites[1].set_pos(slottyMcSlotface.get_position_for_xy(0,0))   ## shadow
 
 # generate a new player
 func new_player():
