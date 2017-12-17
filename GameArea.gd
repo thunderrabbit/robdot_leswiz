@@ -12,7 +12,14 @@ var slot_gap_h = slot_gap
 
 # var bottom_space = 20
 
-var slots = []
+var player_sprite_y_shadow		# player's block sprite and shadow (where sprite would land)
+var player_position = Vector2()	# player position in x,y index
+
+var ItemDatabase		# Will know about pieces
+var block_sprite = preload("res://SubScenes/GamePiece.tscn")
+
+var slots = []			# array of all the positions in the board
+var slottyMcSlotface	# Will be used to determine positions of pieces based on slots
 
 const SLOT_SIZE = 52
 
@@ -20,6 +27,11 @@ class Slot:
 	extends Control
 	var container = null
 	var stack     = null
+	##  http://www.gamefromscratch.com/post/2015/02/23/Godot-Engine-Tutorial-Part-6-Multiple-Scenes-and-Global-Variables.aspx
+	var GLOBALtop_space = 30		# Might just move the Popup down instead
+	var GLOBALleft_space = 10		# Space on the left
+	var GLOBALslot_gap_v = 5
+	var GLOBALslot_gap_h = 5
 	var menu      = null
 	var dragging  = null
 	var timer     = null
@@ -131,17 +143,80 @@ class Slot:
 		else:
 			return stack.count
 
+	func get_position_for_xy(x,y):
+		return Vector2(GLOBALleft_space+(SLOT_SIZE + GLOBALslot_gap_h)*(x), 
+					    GLOBALtop_space+(SLOT_SIZE + GLOBALslot_gap_v)*(y))
+
 func _ready():
-	popup()
+	slottyMcSlotface = Slot.new(self)
+	ItemDatabase = get_node("/root/item_database")
+	randomize()		# randomize seed
+	popup()			# make scene visible
+	var x
+	var y
 	for i in range(grid_slots):
 		print("add slot ", i)
 		var slot = Slot.new(self)
 		slot.set_name("slot_"+str(i))
 		add_child(slot)
 		slots.append(slot)
-		slot.set_pos(Vector2(left_space+(SLOT_SIZE + slot_gap_h)*(i%slots_across), 
-					         top_space+(SLOT_SIZE + slot_gap_v)*(i/slots_across)))
+		x = i%slots_across
+		y = i/slots_across
+		slot.set_pos(slottyMcSlotface.get_position_for_xy(x,y))
+	new_player()
 
+# get a random number to choose the type
+func random_type():
+	return randi() % ItemDatabase.num_items()
+
+# update player sprite display
+func update_player_sprites(player_sprites):
+	player_sprites[0].get_node("Sprite").set_pos(slottyMcSlotface.get_position_for_xy(player_position.x, player_position.y))
+	player_sprites[1].get_node("Sprite").set_pos(slottyMcSlotface.get_position_for_xy(player_position.x, column_height(player_position.x)))   ## shadow
+	player_sprites[1].get_node("Sprite").set_modulate(Color(1,1,1, 0.3))
+
+func column_height(column):
+	return column
+
+# generate a new player
+func new_player():
+	# new player will be a random of four colors
+	var new_player_type_ordinal = random_type()
+
+	# select top center position
+	player_position = Vector2(slots_across/2, 0)
+
+	# instantiate a block
+	player_sprite_y_shadow = []
+
+	# instantiate four blocks for our player.  i is unused here
+	for i in range(2):
+		# instantiate a block
+		var sprite = block_sprite.instance()
+
+		# test talking to the sprite's script
+		sprite.set_type_ordinal(new_player_type_ordinal)
+
+		sprite.set_z_as_relative(true)  #trying to make them visible
+		sprite.set_z(500)  #trying to make them visible
+
+		# keep it in player_sprites so we can find them later
+		player_sprite_y_shadow.append(sprite)
+		# add it to scene
+		add_child(sprite)
+#
+	# now arrange the blocks making up this player in the right shape
+	update_player_sprites(player_sprite_y_shadow)
+#
+#	# check game over
+#	for block in get_player_block_positions():
+#		if board[Vector2(block.x, block.y)] != null:
+#			game_over()
+#			return
+
+## I really do not like having these work here, but they do not seem to work elsewhere
+## I want mouse_enter and mouse_exit to be handled by the piece, not the game board.
+## Plus, why the heck do these get triggered for each piece when they are here at the board level??
 func _on_GameArea_mouse_enter():
 	print("GameArea entered")
 
