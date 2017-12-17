@@ -171,8 +171,9 @@ func random_type():
 
 # update player sprite display
 func update_player_sprites(player_sprites):
-	player_sprites[0].set_pos(slottyMcSlotface.get_position_for_xy(player_position.x, player_position.y))
-	player_sprites[1].set_pos(slottyMcSlotface.get_position_for_xy(player_position.x, column_height(player_position.x)))   ## shadow
+	player_sprites[0].get_node("Sprite").set_pos(slottyMcSlotface.get_position_for_xy(player_position.x, player_position.y))
+	player_sprites[1].get_node("Sprite").set_pos(slottyMcSlotface.get_position_for_xy(player_position.x, column_height(player_position.x)))   ## shadow
+	player_sprites[1].get_node("Sprite").set_modulate(Color(1,1,1, 0.3))
 
 func column_height(column):
 	return column
