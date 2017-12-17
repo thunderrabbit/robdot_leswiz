@@ -209,9 +209,6 @@ func new_player():
 		# test talking to the sprite's script
 		sprite.set_type_ordinal(new_player_type_ordinal)
 
-		sprite.set_z_as_relative(true)  #trying to make them visible
-		sprite.set_z(500)  #trying to make them visible
-
 		# keep it in player_sprites so we can find them later
 		player_sprite_y_shadow.append(sprite)
 		# add it to scene
