@@ -14,6 +14,7 @@ var slot_gap_h = slot_gap
 
 var player_sprite_y_shadow		# player's block sprite and shadow (where sprite would land)
 var player_position = Vector2()	# player position in x,y index
+
 var ItemDatabase		# Will know about pieces
 var block_sprite = preload("res://SubScenes/GamePiece.tscn")
 
