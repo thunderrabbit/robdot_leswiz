@@ -27,6 +27,7 @@ class Slot:
 	extends Control
 	var container = null
 	var stack     = null
+	##  http://www.gamefromscratch.com/post/2015/02/23/Godot-Engine-Tutorial-Part-6-Multiple-Scenes-and-Global-Variables.aspx
 	var GLOBALtop_space = 30		# Might just move the Popup down instead
 	var GLOBALleft_space = 10		# Space on the left
 	var GLOBALslot_gap_v = 5
@@ -171,7 +172,10 @@ func random_type():
 # update player sprite display
 func update_player_sprites(player_sprites):
 	player_sprites[0].set_pos(slottyMcSlotface.get_position_for_xy(player_position.x, player_position.y))
-	player_sprites[1].set_pos(slottyMcSlotface.get_position_for_xy(0,0))   ## shadow
+	player_sprites[1].set_pos(slottyMcSlotface.get_position_for_xy(player_position.x, column_height(player_position.x)))   ## shadow
+
+func column_height(column):
+	return column
 
 # generate a new player
 func new_player():
