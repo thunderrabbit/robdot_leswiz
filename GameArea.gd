@@ -12,7 +12,7 @@ var slot_gap_h = slot_gap
 
 # var bottom_space = 20
 
-var player_sprite
+var player_sprite_y_shadow		# player's block sprite and shadow (where sprite would land)
 var player_position = Vector2()	# player position in x,y index
 var ItemDatabase		# Will know about pieces
 var block_sprite = preload("res://SubScenes/GamePiece.tscn")
@@ -28,13 +28,13 @@ class Slot:
 	var menu      = null
 	var dragging  = null
 	var timer     = null
-#	var ItemDatabase
+	var ItemDatabase
 	
 	func _init(c):
 		container = c
 	
 	func _ready():
-#		ItemDatabase = get_node("/root/item_database")
+		ItemDatabase = get_node("/root/item_database")
 		set_size(Vector2(SLOT_SIZE, SLOT_SIZE))
 	
 	func _draw():
@@ -149,17 +149,18 @@ func _ready():
 		slots.append(slot)
 		slot.set_pos(Vector2(left_space+(SLOT_SIZE + slot_gap_h)*(i%slots_across), 
 					         top_space+(SLOT_SIZE + slot_gap_v)*(i/slots_across)))
-
 	new_player()
-
 
 # get a random number to choose the type
 func random_type():
 	return randi() % ItemDatabase.num_items()
 
 # update player sprite display
-func update_player_sprite(sprites):
-	player_sprite.set_pos(Vector2(player_position.x*SLOT_SIZE, player_position.y*SLOT_SIZE))
+func update_player_sprites(player_sprites):
+	for i in range(2):
+		player_sprites[i].set_pos(Vector2(i*SLOT_SIZE + player_position.x*SLOT_SIZE, i*SLOT_SIZE + player_position.y*SLOT_SIZE))
+#		player_sprites   .set_pos(Vector2(player_position.x*SLOT_SIZE, player_position.y*SLOT_SIZE))
+	pass
 
 # generate a new player
 func new_player():
@@ -169,22 +170,27 @@ func new_player():
 	# select top center position
 	player_position = Vector2(slots_across/2, 0)
 
+	# instantiate a block
+	player_sprite_y_shadow = []
 
 	# instantiate four blocks for our player.  i is unused here
-	for i in range(1):
+	for i in range(2):
 		# instantiate a block
-		player_sprite = block_sprite.instance()
+		var sprite = block_sprite.instance()
 
-		# test talking to the player_sprite's script
-		player_sprite.set_type_ordinal(new_player_type_ordinal)
-#
-#		# keep it in player_sprite so we can find them later
-#		player_sprite.append(sprite)
-#		# add it to scene
-		add_child(player_sprite)
+		# test talking to the sprite's script
+		sprite.set_type_ordinal(new_player_type_ordinal)
+
+		sprite.set_z_as_relative(true)  #trying to make them visible
+		sprite.set_z(500)  #trying to make them visible
+
+		# keep it in player_sprites so we can find them later
+		player_sprite_y_shadow.append(sprite)
+		# add it to scene
+		add_child(sprite)
 #
 	# now arrange the blocks making up this player in the right shape
-	update_player_sprite(player_sprite)
+	update_player_sprites(player_sprite_y_shadow)
 #
 #	# check game over
 #	for block in get_player_block_positions():
