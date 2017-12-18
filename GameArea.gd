@@ -1,6 +1,9 @@
 extends Popup
 
 const SLOT_SIZE = 52
+const MIN_TIME  = 0.07		# wait at least this long between processing inputs
+var elapsed_time = 10		# pretend it has been 10 seconds so input can definitely be processed upon start
+
 #export(int)    var grid_slots  (was size)    = 5
 var slots_across = 7		# game width in slots
 var slots_down = 10		# game width in slots
@@ -218,6 +221,15 @@ func _input(event):
 		stop_moving()
 
 func _process(delta):
+
+	# if it has not been long enough, get out of here
+	if elapsed_time < MIN_TIME:
+		elapsed_time += delta
+		return
+
+	# it has been long enough, so reset the timer before processing
+	elapsed_time = 0
+
 	# debug process
 	print(input_x_direction, ", ", input_y_direction)
 
