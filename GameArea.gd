@@ -157,12 +157,13 @@ func _ready():
 	ItemDatabase = get_node("/root/item_database")
 	randomize()		# randomize seed
 	popup()			# make scene visible
-	draw_slots()
-	reset_column_heights()
-	setup_board()
-	new_player()
-	set_process(true)
-	set_process_input(true)
+	draw_slots()			# slots are visual squares where sprite can go, but may be invisible for deploy
+	reset_column_heights()	# columns may not be needed, but help with shadow placement
+	setup_board()			# board is array of Vector2 for each slot
+	new_player()			# player is the sprite that moves down
+	stop_moving()			# set x,y movement to 0
+	set_process(true)		# activate _process
+	set_process_input(true)	# activate _input
 
 # columns start at height = 0
 # (no pieces in any column)
