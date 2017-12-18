@@ -215,10 +215,10 @@ func _input(event):
 		input_x_direction = 1
 	elif move_down:
 		print("move down")
-		input_y_direction = -1
+		input_y_direction = 1
 	elif drop_down:
 		print("drop down")
-		input_y_direction = -slots_down
+		input_y_direction = slots_down
 	elif stop_moving:
 		input_x_direction = 0
 		input_y_direction = 0
