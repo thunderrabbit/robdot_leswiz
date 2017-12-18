@@ -234,8 +234,10 @@ func _process(delta):
 	print(input_x_direction, ", ", input_y_direction)
 
 	# if we can move, move
-	if check_movable(input_x_direction, input_y_direction):
-		move_player(input_x_direction, input_y_direction)
+	if check_movable(input_x_direction, 0):
+		move_player(input_x_direction, 0)
+	elif check_movable(0, input_y_direction):
+		move_player(0, input_y_direction)
 	else:
 		if input_y_direction > 0:
 			print("nailed")
