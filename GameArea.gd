@@ -154,12 +154,12 @@ func _ready():
 	randomize()		# randomize seed
 	popup()			# make scene visible
 	draw_slots()
-	reset_columns()
+	reset_column_heights()
 	new_player()
 
 # columns start at height = 0
 # (no pieces in any column)
-func reset_columns():
+func reset_column_heights():
 	for i in range(slots_across):
 		column_heights.append(0)
 
