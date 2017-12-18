@@ -258,11 +258,11 @@ func move_player(x, y):
 
 # nail player to board
 func nail_player():
-	set_process(false)		# activate _process
-	set_process_input(false)	# activate _input
+	set_process(false)			# deactivate _process
+	set_process_input(false)	# deactivate _input
 
+	# tell board{} where the player is
 	board[Vector2(player_position.x, player_position.y)] = player_sprite_y_shadow
-#	player_sprites[index].set_pos(Vector2(player_position.x*width, player_position.y*width))
 
 # get a random number to choose the type
 func random_type():
