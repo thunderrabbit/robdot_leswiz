@@ -319,16 +319,22 @@ func new_player():
 #
 	# now arrange the blocks making up this player in the right shape
 	update_player_sprites(player_sprite_y_shadow)
-#
-#	# check game over
-#	for block in get_player_block_positions():
-#		if board[Vector2(block.x, block.y)] != null:
-#			game_over()
-#			return
+
+	# check game over
+	if board[Vector2(player_position.x, player_position.y)] != null:
+		game_over()
+		return
+
 	set_process(true)		# activate _process
 	set_process_input(true)	# activate _input
 
-
+func game_over():
+	# gray out block sprites if existing
+	var existing_sprites = get_node(".").get_children()
+	for sprite in existing_sprites:
+		# do not remove slots from board
+		if "is_a_game_piece" in sprite:
+			sprite.get_node("Sprite").set_modulate(Color(0.1,0.1,0.1, 1))
 
 ## I really do not like having these work here, but they do not seem to work elsewhere
 ## I want mouse_enter and mouse_exit to be handled by the piece, not the game board.
