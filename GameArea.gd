@@ -242,6 +242,13 @@ func check_movable(x, y):
 		if board[Vector2(player_position.x+x, player_position.y)] != null:
 			return false
 		return true
+	if y == -1 or y == 1:
+		# check border
+		if player_position.y + y >= slots_down or player_position.y + y < 0:
+			return false
+		if board[Vector2(player_position.x, player_position.y+1)] != null:
+			return false
+		return true
 
 # move player
 func move_player(x, y):
