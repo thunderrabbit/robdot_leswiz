@@ -220,8 +220,8 @@ func _input(event):
 		print("move down")
 		input_y_direction = 1
 	elif drop_down:
-		print("drop down")
-		input_y_direction = slots_down
+		print("drop down not implemented")
+#		input_y_direction = slots_down
 	elif stop_moving:
 		stop_moving()
 
