@@ -1,5 +1,6 @@
 extends Popup
 
+const SLOT_SIZE = 52
 #export(int)    var grid_slots  (was size)    = 5
 var slots_across = 7		# game width in slots
 var slots_down = 10		# game width in slots
@@ -24,8 +25,6 @@ var slottyMcSlotface	# Will be used to determine positions of pieces based on sl
 
 var input_x_direction	# -1 = left; 0 = stay; 1 = right
 var input_y_direction	# -1 = down; 0 = stay; 1 = up, but not implemented
-
-const SLOT_SIZE = 52
 
 class Slot:
 	extends Control
