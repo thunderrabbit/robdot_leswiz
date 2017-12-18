@@ -23,6 +23,9 @@ var board = {}			# board of slots_across x slots_down
 var slots = []			# array of all the (visual) positions in the board
 var slottyMcSlotface	# Will be used to determine positions of pieces based on slots
 
+var input_x_direction	# -1 = left; 0 = stay; 1 = right
+var input_y_direction	# -1 = down; 0 = stay; 1 = up, but not implemented
+
 const SLOT_SIZE = 52
 
 class Slot:
@@ -193,6 +196,27 @@ func draw_slots():
 		x = i%slots_across
 		y = i/slots_across
 		slot.set_pos(slottyMcSlotface.get_position_for_xy(x,y))
+
+func _input(event):
+	var move_left = event.is_action_pressed("move_left")
+	var move_right = event.is_action_pressed("move_right")
+	var move_down = event.is_action_pressed("move_down")
+	var stop_moving = not (Input.is_action_pressed("move_right") or Input.is_action_pressed("move_left"))
+
+	if move_left:
+		print("move left")
+		input_x_direction = -1
+	elif move_right:
+		print("move right")
+		input_x_direction = 1
+	elif move_down:
+		print("move down")
+		input_y_direction = -1
+	elif drop_down:
+		print("drop down")
+		input_y_direction = -slots_down
+	elif stop_moving:
+		input_x_direction = 0
 
 
 # get a random number to choose the type
