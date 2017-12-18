@@ -19,7 +19,8 @@ var ItemDatabase		# Will know about pieces
 var block_sprite = preload("res://SubScenes/GamePiece.tscn")
 
 var column_heights = []	# how tall is each column?
-var slots = []			# array of all the positions in the board
+var board = {}			# board of slots_across x slots_down
+var slots = []			# array of all the (visual) positions in the board
 var slottyMcSlotface	# Will be used to determine positions of pieces based on slots
 
 const SLOT_SIZE = 52
@@ -155,6 +156,7 @@ func _ready():
 	popup()			# make scene visible
 	draw_slots()
 	reset_column_heights()
+	setup_board()
 	new_player()
 
 # columns start at height = 0
@@ -162,6 +164,20 @@ func _ready():
 func reset_column_heights():
 	for i in range(slots_across):
 		column_heights.append(0)
+
+# setup the board
+func setup_board():
+	# clear block sprites if existing
+	var existing_sprites = get_node(".").get_children()
+	for sprite in existing_sprites:
+		# do not remove slots from board
+		if "is_a_game_piece" in sprite:
+			sprite.queue_free()
+
+	board = {}
+	for i in range(slots_across):
+		for j in range(slots_down):
+			board[Vector2(i, j)] = null
 
 func draw_slots():
 	var x
