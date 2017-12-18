@@ -18,7 +18,6 @@ var player_position = Vector2()	# player position in x,y index
 var ItemDatabase		# Will know about pieces
 var block_sprite = preload("res://SubScenes/GamePiece.tscn")
 
-var column_heights = []	# how tall is each column?
 var board = {}			# board of slots_across x slots_down
 var slots = []			# array of all the (visual) positions in the board
 var slottyMcSlotface	# Will be used to determine positions of pieces based on slots
@@ -158,16 +157,10 @@ func _ready():
 	randomize()		# randomize seed
 	popup()			# make scene visible
 	draw_slots()			# slots are visual squares where sprite can go, but may be invisible for deploy
-	reset_column_heights()	# columns may not be needed, but help with shadow placement
 	setup_board()			# board is array of Vector2 for each slot
 	new_player()			# player is the sprite that moves down
 	stop_moving()			# set x,y movement to 0
 
-# columns start at height = 0
-# (no pieces in any column)
-func reset_column_heights():
-	for i in range(slots_across):
-		column_heights.append(0)
 
 # setup the board
 func setup_board():
