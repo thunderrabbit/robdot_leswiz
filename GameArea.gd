@@ -18,8 +18,12 @@ var player_position = Vector2()	# player position in x,y index
 var ItemDatabase		# Will know about pieces
 var block_sprite = preload("res://SubScenes/GamePiece.tscn")
 
-var slots = []			# array of all the positions in the board
+var board = {}			# board of slots_across x slots_down
+var slots = []			# array of all the (visual) positions in the board
 var slottyMcSlotface	# Will be used to determine positions of pieces based on slots
+
+var input_x_direction	# -1 = left; 0 = stay; 1 = right
+var input_y_direction	# -1 = down; 0 = stay; 1 = up, but not implemented
 
 const SLOT_SIZE = 52
 
@@ -152,6 +156,27 @@ func _ready():
 	ItemDatabase = get_node("/root/item_database")
 	randomize()		# randomize seed
 	popup()			# make scene visible
+	draw_slots()			# slots are visual squares where sprite can go, but may be invisible for deploy
+	setup_board()			# board is array of Vector2 for each slot
+	new_player()			# player is the sprite that moves down
+	stop_moving()			# set x,y movement to 0
+
+
+# setup the board
+func setup_board():
+	# clear block sprites if existing
+	var existing_sprites = get_node(".").get_children()
+	for sprite in existing_sprites:
+		# do not remove slots from board
+		if "is_a_game_piece" in sprite:
+			sprite.queue_free()
+
+	board = {}
+	for i in range(slots_across):
+		for j in range(slots_down):
+			board[Vector2(i, j)] = null
+
+func draw_slots():
 	var x
 	var y
 	for i in range(grid_slots):
@@ -163,7 +188,81 @@ func _ready():
 		x = i%slots_across
 		y = i/slots_across
 		slot.set_pos(slottyMcSlotface.get_position_for_xy(x,y))
-	new_player()
+
+func stop_moving():
+	input_x_direction = 0
+	input_y_direction = 0
+
+func _input(event):
+	var move_left = event.is_action_pressed("move_left")
+	var move_right = event.is_action_pressed("move_right")
+	var move_down = event.is_action_pressed("move_down")
+	var drop_down = event.is_action_pressed("drop_down")
+	var stop_moving = not (Input.is_action_pressed("move_right") or 
+						   Input.is_action_pressed("move_left") or
+						   Input.is_action_pressed("move_down")
+						  )
+
+	if move_left:
+		print("move left")
+		input_x_direction = -1
+	elif move_right:
+		print("move right")
+		input_x_direction = 1
+	elif move_down:
+		print("move down")
+		input_y_direction = 1
+	elif drop_down:
+		print("drop down not implemented")
+#		input_y_direction = slots_down
+	elif stop_moving:
+		stop_moving()
+
+func _process(delta):
+	# debug process
+	print(input_x_direction, ", ", input_y_direction)
+
+	# if we can move, move
+	if check_movable(input_x_direction, input_y_direction):
+		move_player(input_x_direction, input_y_direction)
+	else:
+		if input_y_direction > 0:
+			print("nailed")
+			nail_player()
+			new_player()
+
+func check_movable(x, y):
+	# x is side to side motion.  -1 = left   1 = right
+	if x == -1 or x == 1:
+		# check border
+		if player_position.x + x >= slots_across or player_position.x + x < 0:
+			return false
+		# check collision
+		if board[Vector2(player_position.x+x, player_position.y)] != null:
+			return false
+		return true
+	# y is up down motion.  1 = down     -1 = up, but key is not connected
+	if y == -1 or y == 1:
+		# check border
+		if player_position.y + y >= slots_down or player_position.y + y < 0:
+			return false
+		if board[Vector2(player_position.x, player_position.y+1)] != null:
+			return false
+		return true
+
+# move player
+func move_player(x, y):
+	player_position.x += x
+	player_position.y += y
+	update_player_sprites(player_sprite_y_shadow)
+
+# nail player to board
+func nail_player():
+	set_process(false)		# activate _process
+	set_process_input(false)	# activate _input
+
+	board[Vector2(player_position.x, player_position.y)] = player_sprite_y_shadow
+#	player_sprites[index].set_pos(Vector2(player_position.x*width, player_position.y*width))
 
 # get a random number to choose the type
 func random_type():
@@ -176,7 +275,12 @@ func update_player_sprites(player_sprites):
 	player_sprites[1].get_node("Sprite").set_modulate(Color(1,1,1, 0.3))
 
 func column_height(column):
-	return column
+	var height = slots_down-1
+	for i in range(slots_down-1,0,-1):
+		if board[Vector2(column, i)] != null:
+			height = i-1
+			print(height)
+	return height
 
 # generate a new player
 func new_player():
@@ -197,9 +301,6 @@ func new_player():
 		# test talking to the sprite's script
 		sprite.set_type_ordinal(new_player_type_ordinal)
 
-		sprite.set_z_as_relative(true)  #trying to make them visible
-		sprite.set_z(500)  #trying to make them visible
-
 		# keep it in player_sprites so we can find them later
 		player_sprite_y_shadow.append(sprite)
 		# add it to scene
@@ -213,6 +314,10 @@ func new_player():
 #		if board[Vector2(block.x, block.y)] != null:
 #			game_over()
 #			return
+	set_process(true)		# activate _process
+	set_process_input(true)	# activate _input
+
+
 
 ## I really do not like having these work here, but they do not seem to work elsewhere
 ## I want mouse_enter and mouse_exit to be handled by the piece, not the game board.

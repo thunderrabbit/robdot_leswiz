@@ -3,6 +3,7 @@ extends Area2D
 # piece_type is more boss than the sprite node
 var piece_type
 var mouse_is_in
+var is_a_game_piece = true
 
 var typeset = [
 	"dog",
