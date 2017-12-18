@@ -162,8 +162,6 @@ func _ready():
 	setup_board()			# board is array of Vector2 for each slot
 	new_player()			# player is the sprite that moves down
 	stop_moving()			# set x,y movement to 0
-	set_process(true)		# activate _process
-	set_process_input(true)	# activate _input
 
 # columns start at height = 0
 # (no pieces in any column)
@@ -228,13 +226,20 @@ func _input(event):
 		stop_moving()
 
 func _process(delta):
+	# debug process
 	print(input_x_direction, ", ", input_y_direction)
+
+	# if we can move, move
 	if check_movable(input_x_direction, input_y_direction):
 		move_player(input_x_direction, input_y_direction)
-	if input_x_direction:
-		pass
+	else:
+		if input_y_direction > 0:
+			print("nailed")
+			nail_player()
+			new_player()
 
 func check_movable(x, y):
+	# x is side to side motion.  -1 = left   1 = right
 	if x == -1 or x == 1:
 		# check border
 		if player_position.x + x >= slots_across or player_position.x + x < 0:
@@ -243,6 +248,7 @@ func check_movable(x, y):
 		if board[Vector2(player_position.x+x, player_position.y)] != null:
 			return false
 		return true
+	# y is up down motion.  1 = down     -1 = up, but key is not connected
 	if y == -1 or y == 1:
 		# check border
 		if player_position.y + y >= slots_down or player_position.y + y < 0:
@@ -256,6 +262,14 @@ func move_player(x, y):
 	player_position.x += x
 	player_position.y += y
 	update_player_sprites(player_sprite_y_shadow)
+
+# nail player to board
+func nail_player():
+	set_process(false)		# activate _process
+	set_process_input(false)	# activate _input
+
+	board[Vector2(player_position.x, player_position.y)] = player_sprite_y_shadow
+#	player_sprites[index].set_pos(Vector2(player_position.x*width, player_position.y*width))
 
 # get a random number to choose the type
 func random_type():
@@ -302,6 +316,10 @@ func new_player():
 #		if board[Vector2(block.x, block.y)] != null:
 #			game_over()
 #			return
+	set_process(true)		# activate _process
+	set_process_input(true)	# activate _input
+
+
 
 ## I really do not like having these work here, but they do not seem to work elsewhere
 ## I want mouse_enter and mouse_exit to be handled by the piece, not the game board.
