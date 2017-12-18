@@ -282,7 +282,12 @@ func update_player_sprites(player_sprites):
 	player_sprites[1].get_node("Sprite").set_modulate(Color(1,1,1, 0.3))
 
 func column_height(column):
-	return slots_down - column_heights[column] - 1
+	var height = slots_down-1
+	for i in range(slots_down-1,0,-1):
+		if board[Vector2(column, i)] != null:
+			height = i-1
+			print(height)
+	return height
 
 # generate a new player
 func new_player():
