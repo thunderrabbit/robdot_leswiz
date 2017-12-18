@@ -201,7 +201,11 @@ func _input(event):
 	var move_left = event.is_action_pressed("move_left")
 	var move_right = event.is_action_pressed("move_right")
 	var move_down = event.is_action_pressed("move_down")
-	var stop_moving = not (Input.is_action_pressed("move_right") or Input.is_action_pressed("move_left"))
+	var drop_down = event.is_action_pressed("drop_down")
+	var stop_moving = not (Input.is_action_pressed("move_right") or 
+						   Input.is_action_pressed("move_left") or
+						   Input.is_action_pressed("move_down")
+						  )
 
 	if move_left:
 		print("move left")
@@ -217,6 +221,7 @@ func _input(event):
 		input_y_direction = -slots_down
 	elif stop_moving:
 		input_x_direction = 0
+		input_y_direction = 0
 
 
 # get a random number to choose the type
