@@ -158,6 +158,8 @@ func _ready():
 	reset_column_heights()
 	setup_board()
 	new_player()
+	set_process(true)
+	set_process_input(true)
 
 # columns start at height = 0
 # (no pieces in any column)
