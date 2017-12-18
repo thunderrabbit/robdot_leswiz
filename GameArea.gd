@@ -197,6 +197,10 @@ func draw_slots():
 		y = i/slots_across
 		slot.set_pos(slottyMcSlotface.get_position_for_xy(x,y))
 
+func stop_moving():
+	input_x_direction = 0
+	input_y_direction = 0
+
 func _input(event):
 	var move_left = event.is_action_pressed("move_left")
 	var move_right = event.is_action_pressed("move_right")
@@ -220,9 +224,30 @@ func _input(event):
 		print("drop down")
 		input_y_direction = slots_down
 	elif stop_moving:
-		input_x_direction = 0
-		input_y_direction = 0
+		stop_moving()
 
+func _process(delta):
+	print(input_x_direction, ", ", input_y_direction)
+	if check_movable(input_x_direction, input_y_direction):
+		move_player(input_x_direction, input_y_direction)
+	if input_x_direction:
+		pass
+
+func check_movable(x, y):
+	if x == -1 or x == 1:
+		# check border
+		if player_position.x + x >= slots_across or player_position.x + x < 0:
+			return false
+		# check collision
+		if board[Vector2(player_position.x+x, player_position.y)] != null:
+			return false
+		return true
+
+# move player
+func move_player(x, y):
+	player_position.x += x
+	player_position.y += y
+	update_player_sprites(player_sprite_y_shadow)
 
 # get a random number to choose the type
 func random_type():
