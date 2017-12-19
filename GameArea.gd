@@ -238,10 +238,6 @@ func _process(delta):
 	if drop_mode:
 		# turn on drop mode
 		input_y_direction = 1
-	else:
-		# turn off drop mode
-		input_y_direction = 0
-
 
 	# debug process
 #	print(input_x_direction, ", ", input_y_direction)
@@ -311,6 +307,7 @@ func column_height(column):
 func new_player():
 	# turn off drop mode
 	drop_mode = false
+	stop_moving()
 
 	# new player will be a random of four colors
 	var new_player_type_ordinal = random_type()
