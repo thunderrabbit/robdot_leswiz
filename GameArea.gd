@@ -1,6 +1,7 @@
 extends Popup
 
 const SLOT_SIZE = 52
+var GRAVITY_TIMEOUT = 1     # fake constant that will change with level
 const MIN_TIME  = 0.07		# wait at least this long between processing inputs
 const MIN_DROP_MODE_TIME = 0.04
 
@@ -31,6 +32,7 @@ var slottyMcSlotface	# Will be used to determine positions of pieces based on sl
 var input_x_direction	# -1 = left; 0 = stay; 1 = right
 var input_y_direction	# -1 = down; 0 = stay; 1 = up, but not implemented
 var drop_mode = false   # true = drop the player
+var gravity_called = false # true = move down 1 unit via gravity
 
 class Slot:
 	extends Control
@@ -164,6 +166,7 @@ func _ready():
 	draw_slots()			# slots are visual squares where sprite can go, but may be invisible for deploy
 	setup_board()			# board is array of Vector2 for each slot
 	new_player()			# player is the sprite that moves down
+	start_gravity_timer()
 
 # setup the board
 func setup_board():
@@ -191,10 +194,17 @@ func draw_slots():
 		y = i/slots_across
 		slot.set_pos(slottyMcSlotface.get_position_for_xy(x,y))
 
+func start_gravity_timer():
+	var le_timer = get_node("Timer")
+	le_timer.set_wait_time(GRAVITY_TIMEOUT)
+	le_timer.start()
+
 func stop_moving():
 	input_x_direction = 0
 	input_y_direction = 0
 
+func _gravity_says_its_time():
+	gravity_called = true
 
 func _input(event):
 	var move_left = event.is_action_pressed("move_left")
@@ -224,6 +234,9 @@ func _input(event):
 
 func _process(delta):
 
+	if gravity_called:
+		input_y_direction = 1
+
 	# if it has not been long enough, get out of here
 	if (not drop_mode and elapsed_time < MIN_TIME) or (drop_mode and elapsed_time < MIN_DROP_MODE_TIME):
 		elapsed_time += delta
@@ -246,6 +259,11 @@ func _process(delta):
 			print("nailed")
 			nail_player()
 			new_player()
+
+	# now that gravity has done its job, we can turn it off
+	if gravity_called:
+		input_y_direction = 0
+		gravity_called = false
 
 func check_movable(x, y):
 	# x is side to side motion.  -1 = left   1 = right
