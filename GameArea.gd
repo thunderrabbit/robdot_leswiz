@@ -2,6 +2,8 @@ extends Popup
 
 const SLOT_SIZE = 52
 const MIN_TIME  = 0.07		# wait at least this long between processing inputs
+const MIN_DROP_MODE_TIME = 0.04
+
 var elapsed_time = 10		# pretend it has been 10 seconds so input can definitely be processed upon start
 
 #export(int)    var grid_slots  (was size)    = 5
@@ -28,6 +30,7 @@ var slottyMcSlotface	# Will be used to determine positions of pieces based on sl
 
 var input_x_direction	# -1 = left; 0 = stay; 1 = right
 var input_y_direction	# -1 = down; 0 = stay; 1 = up, but not implemented
+var drop_mode = false   # true = drop the player
 
 class Slot:
 	extends Control
@@ -195,6 +198,7 @@ func stop_moving():
 	input_x_direction = 0
 	input_y_direction = 0
 
+
 func _input(event):
 	var move_left = event.is_action_pressed("move_left")
 	var move_right = event.is_action_pressed("move_right")
@@ -202,7 +206,8 @@ func _input(event):
 	var drop_down = event.is_action_pressed("drop_down")
 	var stop_moving = not (Input.is_action_pressed("move_right") or 
 						   Input.is_action_pressed("move_left") or
-						   Input.is_action_pressed("move_down")
+						   Input.is_action_pressed("move_down") or
+						   Input.is_action_pressed("drop_down")
 						  )
 
 	if move_left:
@@ -215,23 +220,31 @@ func _input(event):
 		print("move down")
 		input_y_direction = 1
 	elif drop_down:
-		print("drop down not implemented")
-#		input_y_direction = slots_down
+		print("drop down activated")
+		drop_mode = true
 	elif stop_moving:
 		stop_moving()
 
 func _process(delta):
 
 	# if it has not been long enough, get out of here
-	if elapsed_time < MIN_TIME:
+	if (not drop_mode and elapsed_time < MIN_TIME) or (drop_mode and elapsed_time < MIN_DROP_MODE_TIME):
 		elapsed_time += delta
 		return
 
 	# it has been long enough, so reset the timer before processing
 	elapsed_time = 0
 
+	if drop_mode:
+		# turn on drop mode
+		input_y_direction = 1
+	else:
+		# turn off drop mode
+		input_y_direction = 0
+
+
 	# debug process
-	print(input_x_direction, ", ", input_y_direction)
+#	print(input_x_direction, ", ", input_y_direction)
 
 	# if we can move, move
 	if check_movable(input_x_direction, 0):
@@ -292,11 +305,13 @@ func column_height(column):
 	for i in range(slots_down-1,0,-1):
 		if board[Vector2(column, i)] != null:
 			height = i-1
-			print(height)
 	return height
 
 # generate a new player
 func new_player():
+	# turn off drop mode
+	drop_mode = false
+
 	# new player will be a random of four colors
 	var new_player_type_ordinal = random_type()
 
@@ -329,6 +344,7 @@ func new_player():
 
 	set_process(true)		# activate _process
 	set_process_input(true)	# activate _input
+
 
 func game_over():
 	# gray out block sprites if existing
