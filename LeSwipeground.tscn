@@ -7,8 +7,8 @@
 [node name="GameArea" type="Popup" parent="."]
 
 visibility/visible = false
-focus/ignore_mouse = false
-focus/stop_mouse = true
+focus/ignore_mouse = true
+focus/stop_mouse = false
 size_flags/horizontal = 2
 size_flags/vertical = 2
 margin/left = 0.0
@@ -24,10 +24,6 @@ process_mode = 1
 wait_time = 1.0
 one_shot = false
 autostart = false
-
-[connection signal="mouse_enter" from="GameArea" to="GameArea" method="_on_GameArea_mouse_enter"]
-
-[connection signal="mouse_exit" from="GameArea" to="GameArea" method="_on_GameArea_mouse_exit"]
 
 [connection signal="timeout" from="GameArea/Timer" to="GameArea" method="_gravity_says_its_time"]
 

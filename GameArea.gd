@@ -58,15 +58,7 @@ class Slot:
 	func _draw():
 		draw_rect(Rect2(Vector2(0, 0), get_size()), Color(0.2, 0.2, 0.2, 1))
 	
-	func _input_event(event):
-		if event.type == InputEvent.MOUSE_BUTTON:
-			if event.button_index == 2:
-				print(get_pos(), "button 2")
-				accept_event()
-			elif event.button_index == 1:
-				print(get_pos(), "button 1")
-				if !event.pressed:
-					accept_event()
+
 	
 	func can_drop_data(p, v):
 		return can_add_stack(v[1])
@@ -157,6 +149,10 @@ class Slot:
 	func get_position_for_xy(x,y):
 		return Vector2(GLOBALleft_space+(SLOT_SIZE + GLOBALslot_gap_h)*(x), 
 					    GLOBALtop_space+(SLOT_SIZE + GLOBALslot_gap_v)*(y))
+
+	func get_slot_for_position(position):
+		return Vector2((position.x - GLOBALleft_space) / (SLOT_SIZE + GLOBALslot_gap_h),
+						(position.y - GLOBALtop_space) / (SLOT_SIZE + GLOBALslot_gap_v))
 
 func _ready():
 	slottyMcSlotface = Slot.new(self)
@@ -335,6 +331,10 @@ func new_player():
 		# instantiate a block
 		var sprite = block_sprite.instance()
 
+		# hope to help it see mouse
+		sprite.set_pickable(true)
+		sprite._on_Area2D_mouse_enter()
+		
 		# test talking to the sprite's script
 		sprite.set_type_ordinal(new_player_type_ordinal)
 
@@ -363,11 +363,22 @@ func game_over():
 		if "is_a_game_piece" in sprite:
 			sprite.get_node("Sprite").set_modulate(Color(0.1,0.1,0.1, 1))
 
+func _input_event(event):
+	if event.type == InputEvent.MOUSE_BUTTON:
+		print("line 384", event)
+	else:
+		if event.type == InputEvent.MOUSE_MOTION:
+			pass
+		else:
+			print("line 389", event)
+
 ## I really do not like having these work here, but they do not seem to work elsewhere
 ## I want mouse_enter and mouse_exit to be handled by the piece, not the game board.
 ## Plus, why the heck do these get triggered for each piece when they are here at the board level??
-func _on_GameArea_mouse_enter():
+func not_on_GameArea_mouse_enter():
 	print("GameArea entered")
 
-func _on_GameArea_mouse_exit():
+func not_on_GameArea_mouse_exit():
 	print("GameArea exit")
+	
+	
