@@ -185,7 +185,6 @@ func draw_slots():
 	var x
 	var y
 	for i in range(grid_slots):
-		print("add slot ", i)
 		var slot = Slot.new(self)
 		slot.set_name("slot_"+str(i))
 		add_child(slot)
@@ -238,9 +237,6 @@ func _process(delta):
 	if drop_mode:
 		# turn on drop mode
 		input_y_direction = 1
-
-	# debug process
-#	print(input_x_direction, ", ", input_y_direction)
 
 	# if we can move, move
 	if check_movable(input_x_direction, 0):
@@ -330,7 +326,7 @@ func new_player():
 		player_sprite_y_shadow.append(sprite)
 		# add it to scene
 		add_child(sprite)
-#
+
 	# now arrange the blocks making up this player in the right shape
 	update_player_sprites(player_sprite_y_shadow)
 
