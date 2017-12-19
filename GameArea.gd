@@ -164,8 +164,6 @@ func _ready():
 	draw_slots()			# slots are visual squares where sprite can go, but may be invisible for deploy
 	setup_board()			# board is array of Vector2 for each slot
 	new_player()			# player is the sprite that moves down
-	stop_moving()			# set x,y movement to 0
-
 
 # setup the board
 func setup_board():
