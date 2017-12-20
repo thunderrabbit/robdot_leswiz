@@ -333,8 +333,9 @@ func new_player():
 
 		# hope to help it see mouse
 		sprite.set_pickable(true)
-		sprite._on_Area2D_mouse_enter()
-		
+
+		sprite.set_process_input(true)
+
 		# test talking to the sprite's script
 		sprite.set_type_ordinal(new_player_type_ordinal)
 

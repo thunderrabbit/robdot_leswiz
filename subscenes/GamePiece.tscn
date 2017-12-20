@@ -13,7 +13,7 @@ extents = Vector2( 17.0185, 17.0211 )
 
 transform/pos = Vector2( -0.38588, -0.836292 )
 transform/scale = Vector2( 1.01206, 1.02613 )
-input/pickable = false
+input/pickable = true
 shapes/0/shape = SubResource( 1 )
 shapes/0/transform = Matrix32( 1, 0, 0, 1, 0, 0 )
 shapes/0/trigger = false
@@ -37,5 +37,11 @@ script/script = ExtResource( 3 )
 shape = SubResource( 1 )
 trigger = false
 _update_shape_index = 0
+
+[connection signal="input_event" from="." to="." method="_on_Area2D_input_event"]
+
+[connection signal="mouse_enter" from="." to="." method="_on_Area2D_mouse_enter"]
+
+[connection signal="mouse_exit" from="." to="." method="_on_Area2D_mouse_exit"]
 
 
